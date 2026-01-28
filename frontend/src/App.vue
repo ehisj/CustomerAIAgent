@@ -1,136 +1,125 @@
 <template>
   <div class="app">
     <header class="header">
-      <h1>AI Customer Agent</h1>
-      <p class="subtitle">{{ currentView === 'chat' ? 'Speak or type your question' : 'Manage your knowledge base' }}</p>
-      <!-- Navigation Toggle -->
-      <nav class="nav-toggle" role="tablist" aria-label="Main navigation">
-        <button
-          :class="['nav-btn', { active: currentView === 'chat' }]"
-          @click="currentView = 'chat'"
-          role="tab"
-          :aria-selected="currentView === 'chat'"
-        >
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-          <span>Chat</span>
-        </button>
-        <button
-          :class="['nav-btn', { active: currentView === 'documents' }]"
-          @click="currentView = 'documents'"
-          role="tab"
-          :aria-selected="currentView === 'documents'"
-        >
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-          </svg>
-          <span>Documents</span>
-        </button>
-      </nav>
+      <div class="header-content">
+        <h1>AI Customer Agent</h1>
+        <nav class="nav-toggle" role="tablist">
+          <button
+            :class="['nav-btn', { active: currentView === 'chat' }]"
+            @click="currentView = 'chat'"
+            role="tab"
+            :aria-selected="currentView === 'chat'"
+          >
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Chat
+          </button>
+          <button
+            :class="['nav-btn', { active: currentView === 'documents' }]"
+            @click="currentView = 'documents'"
+            role="tab"
+            :aria-selected="currentView === 'documents'"
+          >
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/>
+            </svg>
+            Documents
+          </button>
+        </nav>
+      </div>
     </header>
 
     <main class="main">
       <!-- Chat View -->
-      <div v-if="currentView === 'chat'" class="chat-container">
-        <!-- Mode Toggle -->
-        <div class="mode-toggle">
-          <button
-            :class="['mode-btn', { active: mode === 'voice' }]"
-            @click="mode = 'voice'"
-          >
-            Voice
-          </button>
-          <button
-            :class="['mode-btn', { active: mode === 'text' }]"
-            @click="mode = 'text'"
-          >
-            Text
-          </button>
-        </div>
-
-        <!-- Voice Mode -->
-        <div v-if="mode === 'voice'" class="voice-mode">
-          <AudioRecorder
-            @recording-complete="handleVoiceInput"
-            :disabled="isLoading"
-          />
-        </div>
-
-        <!-- Text Mode -->
-        <div v-else class="text-mode">
-          <form @submit.prevent="handleTextInput" class="text-form">
-            <input
-              v-model="textInput"
-              type="text"
-              placeholder="Type your question..."
-              :disabled="isLoading"
-              class="text-input"
-            />
-            <button type="submit" :disabled="isLoading || !textInput.trim()" class="send-btn">
-              {{ isLoading ? 'Sending...' : 'Send' }}
-            </button>
-          </form>
-        </div>
-
-        <!-- Loading Indicator -->
-        <div v-if="isLoading" class="loading">
-          <div class="loading-spinner"></div>
-          <p>{{ loadingMessage }}</p>
-        </div>
-
-        <!-- Error Display -->
-        <div v-if="error" class="error">
-          <p>{{ error }}</p>
-          <button @click="error = null" class="dismiss-btn">Dismiss</button>
-        </div>
-
-        <!-- Response Section -->
-        <div v-if="lastResponse" class="response-section">
-          <!-- Transcript -->
-          <div v-if="lastResponse.transcript" class="card transcript-card">
-            <h3>Your Question</h3>
-            <p>{{ lastResponse.transcript }}</p>
+      <div v-if="currentView === 'chat'" class="chat-view">
+        <div class="transcript-card">
+          <!-- Card Header -->
+          <div class="transcript-header">
+            <span class="transcript-title">Transcript</span>
+            <span class="brand-label">AI Agent</span>
           </div>
 
-          <!-- Agent Response -->
-          <div class="card response-card">
-            <h3>
-              Agent Response
-              <span v-if="!lastResponse.isConfident" class="confidence-badge low">
-                Low Confidence
-              </span>
-              <span v-else class="confidence-badge high">
-                High Confidence
-              </span>
-            </h3>
-            <p>{{ lastResponse.response }}</p>
-
-            <!-- Audio Player -->
-            <div v-if="audioUrl" class="audio-player">
-              <audio ref="audioPlayer" :src="audioUrl" controls></audio>
-              <button @click="playAudio" class="play-btn">
-                Replay Response
-              </button>
+          <!-- Messages -->
+          <div class="messages-area" ref="messagesArea">
+            <div v-if="messages.length === 0" class="empty-state">
+              <p>No messages yet. Start a conversation below.</p>
+            </div>
+            <div
+              v-for="(msg, index) in messages"
+              :key="index"
+              :class="['message-row', { alt: index % 2 === 1 }]"
+            >
+              <span class="msg-time">[{{ msg.time }}]</span>
+              <div class="msg-body">
+                <span :class="['msg-sender', msg.role]">
+                  {{ msg.role === 'customer' ? 'Customer:' : 'Agent:' }}
+                </span>
+                <span class="msg-text">{{ msg.text }}</span>
+                <span v-if="msg.role === 'agent' && msg.isConfident === false" class="confidence-badge low">Low Confidence</span>
+                <span v-if="msg.role === 'agent' && msg.isConfident === true" class="confidence-badge high">High Confidence</span>
+                <!-- Inline audio player -->
+                <div v-if="msg.audioUrl" class="msg-audio">
+                  <audio :src="msg.audioUrl" controls></audio>
+                </div>
+                <!-- Sources toggle -->
+                <div v-if="msg.sources?.length" class="msg-sources">
+                  <button class="sources-toggle" @click="msg.showSources = !msg.showSources">
+                    {{ msg.showSources ? 'Hide' : 'Show' }} sources ({{ msg.sources.length }})
+                  </button>
+                  <div v-if="msg.showSources" class="sources-list">
+                    <div v-for="(src, si) in msg.sources" :key="si" class="source-item">
+                      <span class="source-name">{{ src.source }}</span>
+                      <span class="source-relevance">{{ (src.relevance * 100).toFixed(0) }}%</span>
+                      <p class="source-snippet">{{ src.snippet }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Loading row -->
+            <div v-if="isLoading" class="message-row alt loading-row">
+              <span class="msg-time">&nbsp;</span>
+              <div class="msg-body">
+                <div class="typing-indicator">
+                  <span></span><span></span><span></span>
+                </div>
+                <span class="loading-text">{{ loadingMessage }}</span>
+              </div>
             </div>
           </div>
 
-          <!-- Sources -->
-          <div v-if="lastResponse.sources?.length" class="card sources-card">
-            <h3>Retrieved Sources</h3>
-            <div class="sources-list">
-              <div
-                v-for="(source, index) in lastResponse.sources"
-                :key="index"
-                class="source-item"
-              >
-                <div class="source-header">
-                  <span class="source-name">{{ source.source }}</span>
-                  <span class="source-relevance">{{ (source.relevance * 100).toFixed(0) }}% match</span>
-                </div>
-                <p class="source-snippet">{{ source.snippet }}</p>
-              </div>
+          <!-- Error -->
+          <div v-if="error" class="error-bar">
+            <p>{{ error }}</p>
+            <button @click="error = null" class="dismiss-btn">Dismiss</button>
+          </div>
+
+          <!-- Input Area -->
+          <div class="input-area">
+            <div class="mode-switch">
+              <button :class="['mode-pill', { active: mode === 'text' }]" @click="mode = 'text'">Text</button>
+              <button :class="['mode-pill', { active: mode === 'voice' }]" @click="mode = 'voice'">Voice</button>
+            </div>
+            <div v-if="mode === 'text'" class="text-input-row">
+              <form @submit.prevent="handleTextInput" class="text-form">
+                <input
+                  v-model="textInput"
+                  type="text"
+                  placeholder="Type your question..."
+                  :disabled="isLoading"
+                  class="text-input"
+                />
+                <button type="submit" :disabled="isLoading || !textInput.trim()" class="send-btn">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                  </svg>
+                </button>
+              </form>
+            </div>
+            <div v-else class="voice-input-row">
+              <AudioRecorder @recording-complete="handleVoiceInput" :disabled="isLoading" />
             </div>
           </div>
         </div>
@@ -141,34 +130,62 @@
         <DocumentLibrary />
       </div>
     </main>
-
-    <footer class="footer">
-      <p>Powered by OpenAI Whisper, GPT, and Chroma Vector DB</p>
-    </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue';
+import { ref, reactive, nextTick, onUnmounted } from 'vue';
 import AudioRecorder from './components/AudioRecorder.vue';
 import DocumentLibrary from './components/DocumentLibrary.vue';
 
 const currentView = ref('chat');
-const mode = ref('voice');
+const mode = ref('text');
 const textInput = ref('');
 const isLoading = ref(false);
 const loadingMessage = ref('');
 const error = ref(null);
-const lastResponse = ref(null);
-const audioUrl = ref(null);
-const audioPlayer = ref(null);
+const messages = reactive([]);
+const messagesArea = ref(null);
 
-// Clean up audio URL on unmount
+function formatTime() {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (messagesArea.value) {
+      messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+    }
+  });
+}
+
+function autoPlayAudio(url) {
+  nextTick(() => {
+    const audioEl = messagesArea.value?.querySelector('audio[src="' + url + '"]');
+    if (audioEl) {
+      audioEl.play().catch(() => {});
+    }
+  });
+}
+
+// Track audio URLs for cleanup
+const audioUrls = [];
 onUnmounted(() => {
-  if (audioUrl.value) {
-    URL.revokeObjectURL(audioUrl.value);
-  }
+  audioUrls.forEach(url => URL.revokeObjectURL(url));
 });
+
+function createAudioUrl(base64Audio) {
+  const audioBytes = atob(base64Audio);
+  const audioArray = new Uint8Array(audioBytes.length);
+  for (let i = 0; i < audioBytes.length; i++) {
+    audioArray[i] = audioBytes.charCodeAt(i);
+  }
+  const blob = new Blob([audioArray], { type: 'audio/mp3' });
+  const url = URL.createObjectURL(blob);
+  audioUrls.push(url);
+  return url;
+}
 
 async function handleVoiceInput({ blob, mimeType }) {
   error.value = null;
@@ -177,25 +194,17 @@ async function handleVoiceInput({ blob, mimeType }) {
   try {
     loadingMessage.value = 'Transcribing audio...';
 
-    // Determine correct file extension from mimeType (strip codec info)
     const baseMime = mimeType.split(';')[0];
     const extMap = {
-      'audio/webm': 'webm',
-      'audio/mp4': 'mp4',
-      'audio/mpeg': 'mp3',
-      'audio/wav': 'wav',
-      'audio/wave': 'wav',
-      'audio/ogg': 'ogg',
+      'audio/webm': 'webm', 'audio/mp4': 'mp4', 'audio/mpeg': 'mp3',
+      'audio/wav': 'wav', 'audio/wave': 'wav', 'audio/ogg': 'ogg',
     };
     const ext = extMap[baseMime] || 'webm';
 
     const formData = new FormData();
     formData.append('audio', blob, `recording.${ext}`);
 
-    const response = await fetch('/api/chat/voice', {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await fetch('/api/chat/voice', { method: 'POST', body: formData });
 
     if (!response.ok) {
       const data = await response.json();
@@ -205,33 +214,28 @@ async function handleVoiceInput({ blob, mimeType }) {
     loadingMessage.value = 'Processing response...';
     const data = await response.json();
 
-    lastResponse.value = {
-      transcript: data.transcript,
-      response: data.response,
+    // Push customer message
+    messages.push({ role: 'customer', text: data.transcript, time: formatTime() });
+    scrollToBottom();
+
+    // Push agent message
+    const agentMsg = {
+      role: 'agent',
+      text: data.response,
+      time: formatTime(),
       sources: data.sources,
       isConfident: data.isConfident,
+      showSources: false,
+      audioUrl: null,
     };
 
-    // Convert base64 audio to blob URL
     if (data.audio) {
-      if (audioUrl.value) {
-        URL.revokeObjectURL(audioUrl.value);
-      }
-      const audioBytes = atob(data.audio);
-      const audioArray = new Uint8Array(audioBytes.length);
-      for (let i = 0; i < audioBytes.length; i++) {
-        audioArray[i] = audioBytes.charCodeAt(i);
-      }
-      const blob = new Blob([audioArray], { type: 'audio/mp3' });
-      audioUrl.value = URL.createObjectURL(blob);
-
-      // Auto-play the response
-      setTimeout(() => {
-        if (audioPlayer.value) {
-          audioPlayer.value.play();
-        }
-      }, 100);
+      agentMsg.audioUrl = createAudioUrl(data.audio);
     }
+
+    messages.push(agentMsg);
+    scrollToBottom();
+    if (agentMsg.audioUrl) autoPlayAudio(agentMsg.audioUrl);
   } catch (err) {
     error.value = err.message;
     console.error('Voice input error:', err);
@@ -244,6 +248,13 @@ async function handleVoiceInput({ blob, mimeType }) {
 async function handleTextInput() {
   if (!textInput.value.trim()) return;
 
+  const userText = textInput.value;
+  textInput.value = '';
+
+  // Push customer message immediately
+  messages.push({ role: 'customer', text: userText, time: formatTime() });
+  scrollToBottom();
+
   error.value = null;
   isLoading.value = true;
 
@@ -253,10 +264,7 @@ async function handleTextInput() {
     const response = await fetch('/api/chat/text', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: textInput.value,
-        includeTts: true,
-      }),
+      body: JSON.stringify({ message: userText, includeTts: true }),
     });
 
     if (!response.ok) {
@@ -266,41 +274,29 @@ async function handleTextInput() {
 
     const data = await response.json();
 
-    lastResponse.value = {
-      transcript: textInput.value,
-      response: data.response,
+    const agentMsg = {
+      role: 'agent',
+      text: data.response,
+      time: formatTime(),
       sources: data.sources,
       isConfident: data.isConfident,
+      showSources: false,
+      audioUrl: null,
     };
 
-    // Convert base64 audio to blob URL
     if (data.audio) {
-      if (audioUrl.value) {
-        URL.revokeObjectURL(audioUrl.value);
-      }
-      const audioBytes = atob(data.audio);
-      const audioArray = new Uint8Array(audioBytes.length);
-      for (let i = 0; i < audioBytes.length; i++) {
-        audioArray[i] = audioBytes.charCodeAt(i);
-      }
-      const blob = new Blob([audioArray], { type: 'audio/mp3' });
-      audioUrl.value = URL.createObjectURL(blob);
+      agentMsg.audioUrl = createAudioUrl(data.audio);
     }
 
-    textInput.value = '';
+    messages.push(agentMsg);
+    scrollToBottom();
+    if (agentMsg.audioUrl) autoPlayAudio(agentMsg.audioUrl);
   } catch (err) {
     error.value = err.message;
     console.error('Text input error:', err);
   } finally {
     isLoading.value = false;
     loadingMessage.value = '';
-  }
-}
-
-function playAudio() {
-  if (audioPlayer.value) {
-    audioPlayer.value.currentTime = 0;
-    audioPlayer.value.play();
   }
 }
 </script>
@@ -310,228 +306,173 @@ function playAudio() {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f6fa;
+  background: #1b2a4a;
 }
 
+/* Header */
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 1.5rem 2rem;
-  text-align: center;
+  background: #152238;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-content {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .header h1 {
-  font-size: 1.75rem;
-  margin-bottom: 0.25rem;
+  color: #fff;
+  font-size: 1.25rem;
+  margin: 0;
 }
 
-.subtitle {
-  opacity: 0.9;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-}
-
-/* Navigation Toggle */
 .nav-toggle {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 0.375rem;
 }
 
 .nav-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: white;
-  border-radius: 8px;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s;
 }
 
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255,255,255,0.15);
 }
 
 .nav-btn.active {
-  background: white;
-  color: #667eea;
-  border-color: white;
+  background: #fff;
+  color: #1b2a4a;
+  border-color: #fff;
 }
 
 .nav-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
+/* Main */
 .main {
   flex: 1;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.mode-toggle {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.mode-btn {
-  padding: 0.75rem 2rem;
-  border: 2px solid #667eea;
-  background: white;
-  color: #667eea;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-.mode-btn.active {
-  background: #667eea;
-  color: white;
-}
-
-.mode-btn:hover:not(.active) {
-  background: #f0f2ff;
-}
-
-.voice-mode,
-.text-mode {
   display: flex;
   justify-content: center;
+  padding: 2rem 1rem;
 }
 
-.text-form {
-  display: flex;
-  gap: 0.5rem;
+.chat-view {
   width: 100%;
-  max-width: 500px;
-}
-
-.text-input {
-  flex: 1;
-  padding: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-.text-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.send-btn {
-  padding: 1rem 2rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.2s;
-}
-
-.send-btn:hover:not(:disabled) {
-  background: #5a6fd6;
-}
-
-.send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.loading {
+  max-width: 640px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 2rem;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e0e0e0;
-  border-top-color: #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+/* Transcript Card */
+.transcript-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  max-height: calc(100vh - 140px);
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.error {
-  background: #fee2e2;
-  border: 1px solid #ef4444;
-  color: #b91c1c;
-  padding: 1rem;
-  border-radius: 8px;
+.transcript-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.dismiss-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+.transcript-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1b2a4a;
 }
 
-.response-section {
+.brand-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e6982e;
+}
+
+/* Messages */
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.message-row {
   display: flex;
-  flex-direction: column;
   gap: 1rem;
+  padding: 1rem 1.5rem;
 }
 
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.message-row.alt {
+  background: #f3f4f6;
 }
 
-.card h3 {
-  margin-bottom: 1rem;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.msg-time {
+  color: #2a9d8f;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  min-width: 52px;
+  padding-top: 2px;
 }
 
-.transcript-card {
-  border-left: 4px solid #667eea;
+.msg-body {
+  flex: 1;
 }
 
-.response-card {
-  border-left: 4px solid #22c55e;
+.msg-sender {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.msg-sender.customer {
+  color: #1b2a4a;
+}
+
+.msg-sender.agent {
+  color: #2a9d8f;
+}
+
+.msg-text {
+  color: #374151;
+  line-height: 1.6;
 }
 
 .confidence-badge {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 4px;
-  font-weight: normal;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  font-weight: 500;
 }
 
 .confidence-badge.high {
@@ -544,98 +485,227 @@ function playAudio() {
   color: #92400e;
 }
 
-.audio-player {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.msg-audio {
+  margin-top: 0.5rem;
 }
 
-.audio-player audio {
-  flex: 1;
+.msg-audio audio {
+  width: 100%;
+  height: 36px;
 }
 
-.play-btn {
-  padding: 0.5rem 1rem;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 6px;
+/* Sources */
+.msg-sources {
+  margin-top: 0.5rem;
+}
+
+.sources-toggle {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
   cursor: pointer;
-  font-size: 0.875rem;
 }
 
-.sources-card {
-  border-left: 4px solid #f59e0b;
+.sources-toggle:hover {
+  background: #f9fafb;
 }
 
 .sources-list {
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .source-item {
   background: #f9fafb;
-  padding: 1rem;
-  border-radius: 8px;
-}
-
-.source-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
 }
 
 .source-name {
   font-weight: 600;
-  color: #667eea;
+  color: #2a9d8f;
+  font-size: 0.85rem;
 }
 
 .source-relevance {
-  font-size: 0.875rem;
-  color: #6b7280;
+  float: right;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
 .source-snippet {
-  font-size: 0.875rem;
-  color: #4b5563;
-  line-height: 1.5;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  line-height: 1.4;
 }
 
-/* Documents Container */
-.documents-container {
-  max-width: 900px;
-  margin: 0 auto;
+/* Loading */
+.loading-row {
+  align-items: center;
+}
+
+.typing-indicator {
+  display: inline-flex;
+  gap: 4px;
+  margin-right: 0.5rem;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: #2a9d8f;
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+.loading-text {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* Error */
+.error-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.dismiss-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+/* Input Area */
+.input-area {
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.mode-pill {
+  padding: 0.35rem 1rem;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #6b7280;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-pill.active {
+  background: #1b2a4a;
+  color: #fff;
+  border-color: #1b2a4a;
+}
+
+.text-form {
+  display: flex;
+  gap: 0.5rem;
   width: 100%;
 }
 
-.footer {
-  background: #1f2937;
-  color: #9ca3af;
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.875rem;
+.text-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
 }
 
-/* Responsive Navigation */
+.text-input:focus {
+  outline: none;
+  border-color: #2a9d8f;
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  background: #1b2a4a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: #2a9d8f;
+}
+
+.send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.send-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.voice-input-row {
+  display: flex;
+  justify-content: center;
+}
+
+/* Documents */
+.documents-container {
+  max-width: 900px;
+  width: 100%;
+}
+
+/* Responsive */
 @media (max-width: 480px) {
-  .header {
-    padding: 1rem;
+  .header-content {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .header h1 {
-    font-size: 1.5rem;
+  .main {
+    padding: 1rem 0.5rem;
   }
 
-  .nav-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .nav-icon {
-    width: 16px;
-    height: 16px;
+  .message-row {
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
   }
 }
 </style>

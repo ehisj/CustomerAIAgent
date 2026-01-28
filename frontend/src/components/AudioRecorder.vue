@@ -167,36 +167,37 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .record-btn {
-  width: 120px;
-  height: 120px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #1b2a4a;
   color: white;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   transition: all 0.2s;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(27, 42, 74, 0.3);
 }
 
 .record-btn:hover:not(:disabled) {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  background: #2a9d8f;
+  box-shadow: 0 4px 16px rgba(42, 157, 143, 0.4);
 }
 
 .record-btn:active:not(:disabled),
 .record-btn.recording {
   transform: scale(0.95);
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  background: #ef4444;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
 .record-btn:disabled {
@@ -205,8 +206,8 @@ onUnmounted(() => {
 }
 
 .record-icon {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
 }
 
 .record-icon svg {
@@ -215,36 +216,32 @@ onUnmounted(() => {
 }
 
 .record-text {
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .visualizer {
   display: flex;
-  gap: 4px;
-  height: 30px;
+  gap: 3px;
+  height: 24px;
   align-items: center;
 }
 
 .bar {
-  width: 4px;
-  background: #667eea;
+  width: 3px;
+  background: #2a9d8f;
   border-radius: 2px;
   animation: pulse 0.5s ease-in-out infinite alternate;
 }
 
 @keyframes pulse {
-  from {
-    height: 10px;
-  }
-  to {
-    height: 30px;
-  }
+  from { height: 8px; }
+  to { height: 24px; }
 }
 
 .hint {
-  color: #6b7280;
-  font-size: 0.875rem;
+  color: #9ca3af;
+  font-size: 0.8rem;
 }
 </style>

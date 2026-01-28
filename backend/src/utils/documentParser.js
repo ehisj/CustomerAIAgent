@@ -1,12 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { createRequire } from 'module';
 import mammoth from 'mammoth';
 import { logger } from './logger.js';
 
-// pdf-parse doesn't support ESM, so we use createRequire
-const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
+// pdf-parse v2 exports PDFParse as a named class
+import { PDFParse } from 'pdf-parse';
 
 /**
  * Supported file extensions and their MIME types
@@ -99,18 +97,16 @@ async function parseDocx(filePath, ext) {
 async function parsePdf(filePath) {
   const buffer = await fs.readFile(filePath);
 
-  const data = await pdfParse(buffer, {
-    // Limit pages for very large documents
-    max: 100,
-  });
-
-  const text = data.text.trim();
+  const parser = new PDFParse({ data: new Uint8Array(buffer) });
+  await parser.load();
+  const result = await parser.getText();
+  const text = result.text.trim();
 
   if (!text) {
     throw new Error('PDF appears to be empty or contains only images (OCR not supported)');
   }
 
-  logger.info('PDF parsed', { pages: data.numpages, textLength: text.length });
+  logger.info('PDF parsed', { textLength: text.length });
 
   return { text, filetype: 'pdf' };
 }
