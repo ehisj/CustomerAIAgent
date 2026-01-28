@@ -1,0 +1,89 @@
+Acme Corp Product Catalog Overview
+
+PRODUCT CATEGORY: Smart Home Devices
+
+1. Acme Smart Hub Pro
+Price: $149.99
+Description: The central control unit for all your smart home devices. Features voice control, supports over 500 compatible devices, and includes a 4-inch touchscreen display.
+Warranty: 2 years
+Key Features:
+- Wi-Fi 6 and Bluetooth 5.0 connectivity
+- Works with Alexa, Google Assistant, and Apple HomeKit
+- Energy monitoring dashboard
+- Automated routines and schedules
+
+2. Acme Smart Thermostat
+Price: $79.99
+Description: An intelligent thermostat that learns your preferences and optimizes energy usage. Saves an average of 23% on heating and cooling bills.
+Warranty: 5 years
+Key Features:
+- Remote control via smartphone app
+- Compatible with most HVAC systems
+- Geofencing for automatic away mode
+- Energy usage reports
+
+3. Acme Security Camera Set (2-pack)
+Price: $199.99
+Description: High-definition indoor/outdoor security cameras with night vision and two-way audio.
+Warranty: 1 year
+Key Features:
+- 1080p HD video with HDR
+- Night vision up to 30 feet
+- Motion detection with smart alerts
+- Cloud storage included (7 days free, subscription for more)
+- Weather-resistant (IP65 rated)
+
+PRODUCT CATEGORY: Audio Equipment
+
+4. Acme Wireless Earbuds Pro
+Price: $129.99
+Description: Premium true wireless earbuds with active noise cancellation and transparency mode.
+Warranty: 1 year
+Key Features:
+- 8 hours playback (32 hours with charging case)
+- Active Noise Cancellation
+- IPX4 water resistance
+- Touch controls
+- Wireless charging case included
+
+5. Acme Portable Bluetooth Speaker
+Price: $59.99
+Description: Compact, powerful speaker with 360-degree sound and 20-hour battery life.
+Warranty: 1 year
+Key Features:
+- 20W output with deep bass
+- IPX7 waterproof
+- Built-in microphone for calls
+- Pairs with another speaker for stereo sound
+
+PRODUCT CATEGORY: Accessories
+
+6. Acme Universal Charging Station
+Price: $49.99
+Description: Multi-device charging station that charges up to 5 devices simultaneously.
+Warranty: 2 years
+Key Features:
+- 2 USB-C PD ports (65W total)
+- 2 USB-A Quick Charge 3.0 ports
+- Wireless charging pad (15W)
+- Compact desktop design
+
+7. Acme Laptop Stand
+Price: $34.99
+Description: Ergonomic aluminum laptop stand with adjustable height settings.
+Warranty: Lifetime
+Key Features:
+- Supports laptops up to 17 inches
+- 6 height adjustment positions
+- Improves airflow for cooling
+- Foldable for portability
+
+BEST SELLERS:
+- Acme Smart Hub Pro
+- Acme Wireless Earbuds Pro
+- Acme Security Camera Set
+
+CURRENT PROMOTIONS:
+- Buy any Smart Home device, get 20% off accessories
+- Free shipping on orders over $75
+- New customer discount: 10% off first order with code WELCOME10

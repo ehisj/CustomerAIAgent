@@ -1,0 +1,100 @@
+Acme Corp Company Policies
+
+RETURN AND REFUND POLICY
+
+General Returns:
+- All products can be returned within 30 days of delivery date
+- Items must be in original packaging with all accessories included
+- Original receipt or order confirmation required
+- Refunds processed within 5-7 business days after inspection
+
+Exceptions:
+- Electronics: Must be returned within 15 days, unopened or defective
+- Personalized items: Non-returnable unless defective
+- Clearance items marked "Final Sale": Non-returnable
+- Gift cards: Non-refundable
+
+Defective Products:
+- Defective items can be exchanged or refunded within the warranty period
+- Contact customer support for a Return Merchandise Authorization (RMA) number
+- We cover return shipping costs for defective items
+
+Refund Methods:
+- Original payment method receives refund
+- Store credit available upon request (bonus 10% added to store credit refunds)
+- Cash purchases refunded by check
+
+WARRANTY INFORMATION
+
+Standard Warranty Coverage:
+- All products include manufacturer warranty
+- Warranty period varies by product (see product page for details)
+- Covers defects in materials and workmanship
+- Does not cover damage from misuse, accidents, or unauthorized modifications
+
+Extended Warranty (Acme Care):
+- Available for purchase at checkout
+- Extends coverage to 3 years from purchase date
+- Includes accidental damage protection
+- One-time screen replacement for applicable devices
+- Priority customer support
+- Price: 15% of product price
+
+How to File a Warranty Claim:
+1. Contact customer support with proof of purchase
+2. Describe the issue in detail
+3. Receive RMA number if replacement/repair is needed
+4. Ship item to our service center (we provide prepaid label)
+5. Receive repaired item or replacement within 7-10 business days
+
+PRIVACY POLICY SUMMARY
+
+Data Collection:
+- We collect information you provide directly (name, email, address, payment info)
+- We collect usage data to improve our services
+- We use cookies for website functionality and analytics
+
+Data Usage:
+- Process and fulfill orders
+- Send order updates and shipping notifications
+- Personalize your shopping experience
+- Marketing communications (opt-out available)
+
+Data Protection:
+- All data encrypted in transit and at rest
+- PCI-DSS compliant for payment processing
+- Regular security audits
+- No selling of personal data to third parties
+
+Your Rights:
+- Request access to your personal data
+- Request deletion of your data
+- Opt out of marketing communications
+- Update your information at any time
+
+SHIPPING POLICY
+
+Processing Time:
+- Orders placed before 2 PM ET ship same business day
+- Orders placed after 2 PM ET ship next business day
+- Custom or personalized items: 3-5 business days processing
+
+Shipping Options (Continental US):
+- Standard (5-7 days): Free on orders over $75, otherwise $5.99
+- Express (2-3 days): $12.99
+- Next Day: $24.99 (order by 2 PM ET)
+
+Alaska, Hawaii, and Territories:
+- Standard: $12.99 (7-10 days)
+- Express: $24.99 (3-5 days)
+
+International Shipping:
+- Available to 50+ countries
+- Rates calculated at checkout based on destination and weight
+- Customs fees and duties are customer responsibility
+- Delivery: 7-14 business days
+
+Lost or Damaged Packages:
+- Contact us within 48 hours of expected delivery
+- We will file a claim and send replacement or refund
+- Photo evidence may be required for damaged items
